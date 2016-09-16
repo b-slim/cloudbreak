@@ -152,9 +152,14 @@ public class SaltOrchestrator implements HostOrchestrator {
             if (pillarConfig.getServicePillarConfig().containsKey("kerberos")) {
                 runSaltCommand(sc, new GrainAddRunner(server, allNodes, "kerberos_server"), exitCriteriaModel);
             }
-            if (pillarConfig.getServicePillarConfig().containsKey("ldap")) {
-                runSaltCommand(sc, new GrainAddRunner(server, allNodes, "knox_gateway"), exitCriteriaModel);
+            // ldap
+            if (pillarConfig.getServicePillarConfig().containsKey("ambari_ldap")) {
+                runSaltCommand(sc, new GrainAddRunner(server, allNodes, "ambari_ldap"), exitCriteriaModel);
             }
+            if (pillarConfig.getServicePillarConfig().containsKey("knox_ldap")) {
+                runSaltCommand(sc, new GrainAddRunner(server, allNodes, "knox_ldap"), exitCriteriaModel);
+            }
+            // smartsense
             if (configureSmartSense) {
                 runSaltCommand(sc, new GrainAddRunner(server, allNodes, "smartsense"), exitCriteriaModel);
             }

@@ -19,9 +19,9 @@ base:
     - match: grain
     - ambari.agent
 
-  'G@recipes:post and G@roles:knox_gateway':
+  'G@recipes:post and G@roles:knox_ldap':
     - match: compound
-    - ldap
+    - ldap.knox
 
   'I@platform:AWS and G@roles:smartsense':
     - match: compound

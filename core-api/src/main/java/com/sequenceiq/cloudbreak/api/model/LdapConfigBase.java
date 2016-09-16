@@ -32,7 +32,7 @@ public class LdapConfigBase implements JsonEntity {
     @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.SERVER_PORT, required = true)
     private Integer serverPort;
 
-    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.IS_SERVER_SSL, required = true)
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.IS_SERVER_SSL)
     private Boolean serverSSL;
 
     @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.BIND_DN)
@@ -56,6 +56,27 @@ public class LdapConfigBase implements JsonEntity {
 
     @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.PRINCIPAL_REGEX)
     private String principalRegex;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.USER_CLASS)
+    private String userClass;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.USER_ATTR)
+    private String userAttribute;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.GROUP_CLASS)
+    private String groupClass;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.GROUP_ATTR)
+    private String groupAttribute;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.MEMBER_ATTR)
+    private String memberAttribute;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.DN)
+    private String distinguishName;
+
+    @ApiModelProperty(value = ModelDescriptions.LdapConfigModelDescription.BASE_DN)
+    private String baseDistinguishName;
 
     public String getName() {
         return name;
@@ -151,5 +172,61 @@ public class LdapConfigBase implements JsonEntity {
 
     public void setPrincipalRegex(String principalRegex) {
         this.principalRegex = principalRegex;
+    }
+
+    public String getUserClass() {
+        return userClass;
+    }
+
+    public void setUserClass(String userClass) {
+        this.userClass = userClass;
+    }
+
+    public String getUserAttribute() {
+        return userAttribute;
+    }
+
+    public void setUserAttribute(String userAttribute) {
+        this.userAttribute = userAttribute;
+    }
+
+    public String getGroupClass() {
+        return groupClass;
+    }
+
+    public void setGroupClass(String groupClass) {
+        this.groupClass = groupClass;
+    }
+
+    public String getGroupAttribute() {
+        return groupAttribute;
+    }
+
+    public void setGroupAttribute(String groupAttribute) {
+        this.groupAttribute = groupAttribute;
+    }
+
+    public String getMemberAttribute() {
+        return memberAttribute;
+    }
+
+    public void setMemberAttribute(String memberAttribute) {
+        this.memberAttribute = memberAttribute;
+    }
+
+    public String getDistinguishName() {
+        return distinguishName;
+    }
+
+    public void setDistinguishName(String distinguishName) {
+        this.distinguishName = distinguishName;
+    }
+
+    public String getBaseDistinguishName() {
+        return baseDistinguishName;
+    }
+
+    public void setBaseDistinguishName(String baseDistinguishName) {
+        this.baseDistinguishName = baseDistinguishName;
     }
 }

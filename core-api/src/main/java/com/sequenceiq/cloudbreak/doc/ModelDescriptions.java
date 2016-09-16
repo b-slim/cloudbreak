@@ -272,7 +272,12 @@ public class ModelDescriptions {
         public static final String GROUP_SEARCH_BASE = "template for group search for authorization (e.g. dc=hadoop,dc=apache,dc=org)";
         public static final String GROUP_SEARCH_FILTER = "filter for group search for authorization";
         public static final String PRINCIPAL_REGEX = "parses the principal for insertion into templates via regex.";
-
-
+        public static final String USER_CLASS = "user attribute object class for LDAP (e.g. person)";
+        public static final String USER_ATTR = "user attribute name for LDAP (e.g. uid)";
+        public static final String GROUP_CLASS = "group attribute object class for LDAP (e.g. group)";
+        public static final String GROUP_ATTR = "group attribute name for LDAP (e.g. cn)";
+        public static final String MEMBER_ATTR = "group membership attribute name for LDAP (e.g. member)";
+        public static final String DN = "distinguished name attribute for LDAP (e.g. distinguishName)";
+        public static final String BASE_DN = "base DN for LDAP";
     }
 }

@@ -23,7 +23,13 @@ public class JsonToLdapConfigConverter extends AbstractConversionServiceAwareCon
         config.setUserSearchBase(json.getUserSearchBase());
         config.setUserSearchFilter(json.getUserSearchFilter());
         config.setPrincipalRegex(json.getPrincipalRegex());
-
+        config.setUserClass(json.getUserClass());
+        config.setUserAttribute(json.getUserAttribute());
+        config.setGroupClass(json.getGroupClass());
+        config.setGroupAttribute(json.getGroupAttribute());
+        config.setMemberAttribute(json.getMemberAttribute());
+        config.setDistinguishName(json.getDistinguishName());
+        config.setBaseDistinguishName(json.getBaseDistinguishName());
         return config;
     }
 }

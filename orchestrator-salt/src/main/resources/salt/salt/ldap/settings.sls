@@ -10,6 +10,13 @@
 {% set groupSearchBase = salt['pillar.get']('ldap:groupSearchBase') %}
 {% set groupSearchFilter = salt['pillar.get']('ldap:groupSearchFilter') %}
 {% set principalRegex = salt['pillar.get']('ldap:principalRegex') %}
+{% set userClass = salt['pillar.get']('ldap:userClass') %}
+{% set userAttribute = salt['pillar.get']('ldap:userAttribute') %}
+{% set groupClass = salt['pillar.get']('ldap:groupClass') %}
+{% set groupAttribute = salt['pillar.get']('ldap:groupAttribute') %}
+{% set memberAttribute = salt['pillar.get']('ldap:memberAttribute') %}
+{% set distinguishName = salt['pillar.get']('ldap:distinguishName') %}
+{% set baseDistinguishName = salt['pillar.get']('ldap:baseDistinguishName') %}
 
 {% set ldap = {} %}
 {% do ldap.update({
@@ -24,5 +31,12 @@
     'userSearchFilter': userSearchFilter,
     'groupSearchBase': groupSearchBase,
     'groupSearchFilter': groupSearchFilter,
-    'principalRegex': principalRegex
+    'principalRegex': principalRegex,
+    'userClass': userClass,
+    'userAttribute': userAttribute,
+    'groupClass': groupClass,
+    'groupAttribute': groupAttribute,
+    'memberAttribute': memberAttribute,
+    'distinguishName': distinguishName,
+    'baseDistinguishName': baseDistinguishName
 }) %}

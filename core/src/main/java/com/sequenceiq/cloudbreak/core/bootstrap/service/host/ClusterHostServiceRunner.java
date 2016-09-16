@@ -89,8 +89,11 @@ public class ClusterHostServiceRunner {
             AmbariDatabase ambariDb = componentConfigProvider.getAmbariDatabase(stack.getId());
             servicePillar.put("ambari-database", new SaltPillarProperties("/ambari/database.sls", singletonMap("ambari", singletonMap("database", ambariDb))));
             LdapConfig ldapConfig = cluster.getLdapConfig();
-            if (ldapConfig != null && blueprintUtils.containsComponent(cluster.getBlueprint(), "KNOX_GATEWAY")) {
-                servicePillar.put("ldap", new SaltPillarProperties("/ldap/init.sls", singletonMap("ldap", ldapConfig)));
+            if (ldapConfig != null) {
+                servicePillar.put("ambari_ldap", new SaltPillarProperties("/ldap/init.sls", singletonMap("ldap", ldapConfig)));
+                if (blueprintUtils.containsComponent(cluster.getBlueprint(), "KNOX_GATEWAY")) {
+                    servicePillar.put("knox_ldap", new SaltPillarProperties("/ldap/init.sls", singletonMap("ldap", ldapConfig)));
+                }
             }
             SaltPillarConfig saltPillarConfig = new SaltPillarConfig(servicePillar);
             hostOrchestrator.runService(gatewayConfig, nodes, saltPillarConfig, clusterDeletionBasedExitCriteriaModel(stack.getId(), cluster.getId()));

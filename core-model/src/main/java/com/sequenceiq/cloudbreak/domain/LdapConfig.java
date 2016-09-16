@@ -77,6 +77,20 @@ public class LdapConfig implements ProvisionEntity {
 
     private String principalRegex;
 
+    private String userClass;
+
+    private String userAttribute;
+
+    private String groupClass;
+
+    private String groupAttribute;
+
+    private String memberAttribute;
+
+    private String distinguishName;
+
+    private String baseDistinguishName;
+
     public Long getId() {
         return id;
     }
@@ -203,5 +217,61 @@ public class LdapConfig implements ProvisionEntity {
 
     public void setPrincipalRegex(String principalRegex) {
         this.principalRegex = principalRegex;
+    }
+
+    public String getUserClass() {
+        return userClass;
+    }
+
+    public void setUserClass(String userClass) {
+        this.userClass = userClass;
+    }
+
+    public String getUserAttribute() {
+        return userAttribute;
+    }
+
+    public void setUserAttribute(String userAttribute) {
+        this.userAttribute = userAttribute;
+    }
+
+    public String getGroupClass() {
+        return groupClass;
+    }
+
+    public void setGroupClass(String groupClass) {
+        this.groupClass = groupClass;
+    }
+
+    public String getGroupAttribute() {
+        return groupAttribute;
+    }
+
+    public void setGroupAttribute(String groupAttribute) {
+        this.groupAttribute = groupAttribute;
+    }
+
+    public String getMemberAttribute() {
+        return memberAttribute;
+    }
+
+    public void setMemberAttribute(String memberAttribute) {
+        this.memberAttribute = memberAttribute;
+    }
+
+    public String getDistinguishName() {
+        return distinguishName;
+    }
+
+    public void setDistinguishName(String distinguishName) {
+        this.distinguishName = distinguishName;
+    }
+
+    public String getBaseDistinguishName() {
+        return baseDistinguishName;
+    }
+
+    public void setBaseDistinguishName(String baseDistinguishName) {
+        this.baseDistinguishName = baseDistinguishName;
     }
 }

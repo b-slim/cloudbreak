@@ -1,4 +1,5 @@
 {%- from 'ambari/settings.sls' import ambari with context %}
+{% from 'ldap/settings.sls' import ldap with context %}
 
 {% if not ambari.is_predefined_repo %}
 
@@ -44,6 +45,14 @@ set_install_timeout:
     - name: /etc/ambari-server/conf/ambari.properties
     - pattern: "agent.package.install.task.timeout=1800"
     - repl: "agent.package.install.task.timeout=3600"
+
+{% if salt['grains.get']('roles:ambari_ldap') %}
+setup_ambar_for_ldap:
+  cmd.run:
+    - name: salt://ambari/scripts/setup_ldap.sh
+
+
+{% endif %}
 
 {% if ambari.is_systemd %}
 
