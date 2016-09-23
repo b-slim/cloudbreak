@@ -10,8 +10,8 @@ public class CloudCredential extends DynamicModel {
     public static final String SMART_SENSE_ID = "smartSenseId";
     private final Long id;
     private final String name;
-    private final String publicKey;
     private final String loginUserName;
+    private final String publicKey;
 
     public CloudCredential(Long id, String name, String publicKey, String loginUserName) {
         this(id, name, publicKey, loginUserName, new HashMap<>());

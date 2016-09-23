@@ -1,6 +1,8 @@
 package com.sequenceiq.cloudbreak.service.credential;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +25,7 @@ import com.sequenceiq.cloudbreak.domain.Stack;
 import com.sequenceiq.cloudbreak.repository.CredentialRepository;
 import com.sequenceiq.cloudbreak.repository.StackRepository;
 import com.sequenceiq.cloudbreak.service.DuplicateKeyValueException;
+import com.sequenceiq.cloudbreak.service.notification.Notification;
 import com.sequenceiq.cloudbreak.service.notification.NotificationSender;
 import com.sequenceiq.cloudbreak.service.stack.connector.adapter.ServiceProviderCredentialAdapter;
 
@@ -67,14 +70,46 @@ public class CredentialService {
     }
 
     @Transactional(Transactional.TxType.NEVER)
+    public Map<String, String> interactiveLogin(CbUser user, Credential credential) {
+        LOGGER.debug("Interactive login: [User: '{}', Account: '{}']", user.getUsername(), user.getAccount());
+        credential.setOwner(user.getUserId());
+        credential.setAccount(user.getAccount());
+        return credentialAdapter.interactiveLogin(credential);
+    }
+
+    @Transactional(Transactional.TxType.NEVER)
     public Credential create(CbUser user, Credential credential) {
         LOGGER.debug("Creating credential: [User: '{}', Account: '{}']", user.getUsername(), user.getAccount());
         credential.setOwner(user.getUserId());
         credential.setAccount(user.getAccount());
+        return saveCredential(credential);
+    }
+
+    @Transactional(Transactional.TxType.NEVER)
+    public Credential create(String userId, String account, Credential credential) {
+        LOGGER.debug("Creating credential: [UserId: '{}', Account: '{}']", userId, account);
+        credential.setOwner(userId);
+        credential.setAccount(account);
+        return saveCredential(credential);
+    }
+
+    private void sendNotification(Credential credential) {
+        Notification notification = new Notification();
+        notification.setEventType("CREDENTIAL_CREATED");
+        notification.setEventTimestamp(new Date());
+        notification.setEventMessage("Credential created");
+        notification.setOwner(credential.getOwner());
+        notification.setAccount(credential.getAccount());
+        notification.setCloud(credential.cloudPlatform());
+        notificationSender.send(notification);
+    }
+
+    private Credential saveCredential(Credential credential) {
         credential = credentialAdapter.init(credential);
         Credential savedCredential;
         try {
             savedCredential = credentialRepository.save(credential);
+            sendNotification(credential);
         } catch (DataIntegrityViolationException ex) {
             throw new DuplicateKeyValueException(APIResourceType.CREDENTIAL, credential.getName(), ex);
         }
