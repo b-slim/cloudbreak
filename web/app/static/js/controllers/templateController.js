@@ -289,7 +289,7 @@ angular.module('uluwatuControllers').controller('templateController', [
                 }
             } else {
                 templateTemp.maxDiskNumber = 24;
-                templateTemp.minDiskNumber = 1;
+                templateTemp.minDiskNumber = 0;
                 templateTemp.minDiskSize = 10;
                 templateTemp.maxDiskSize = 10000;
                 templateTemp.CPUs = null;

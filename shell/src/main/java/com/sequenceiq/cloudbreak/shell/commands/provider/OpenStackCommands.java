@@ -85,7 +85,7 @@ public class OpenStackCommands implements CommandMarker {
             @CliOption(key = "keystoneAuthScope", help = "keystoneAuthScope of the credential for cb-keystone-v3*") String keystoneAuthScope,
             @CliOption(key = "domainName", help = "domainName of the credential for cb-keystone-v3-default-scope") String domainName,
             @CliOption(key = "projectDomainName", help = "projectDomainName of the credential for cb-keystone-v3-project-scope")
-            String projectDomainName,
+                    String projectDomainName,
             @CliOption(key = "projectName", help = "projectName of the credential for cb-keystone-v3-project-scope") String projectName,
             @CliOption(key = "sshKeyPath", help = "path of a public SSH key file") File sshKeyPath,
             @CliOption(key = "sshKeyUrl", help = "URL of a public SSH key file") String sshKeyUrl,
@@ -198,10 +198,11 @@ public class OpenStackCommands implements CommandMarker {
             @CliOption(key = "platformId", help = "Id of a platform the template belongs to") Long platformId
     ) {
         Map<String, Object> parameters = new HashMap<>();
-        if (volumeCount < 1) {
-            throw shellContext.exceptionTransformer().transformToRuntimeException("Count of volumes could not be smaller than 1.");
+        if (volumeCount < 0) {
+            throw shellContext.exceptionTransformer().transformToRuntimeException("Count of volumes could not be smaller than 0.");
         }
-        if (volumeSize < TEN) {
+
+        if (volumeCount > 0 && volumeSize < TEN) {
             throw shellContext.exceptionTransformer().transformToRuntimeException("Size of volumes could not be smaller than 10 Gb.");
         }
         return baseTemplateCommands.create(name, instanceType, volumeCount, volumeSize, "HDD", publicInAccount, description, parameters, platformId, PLATFORM);

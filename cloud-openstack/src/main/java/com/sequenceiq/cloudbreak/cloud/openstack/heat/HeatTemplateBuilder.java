@@ -45,7 +45,7 @@ public class HeatTemplateBuilder {
     private Configuration freemarkerConfiguration;
 
     public String build(String stackName, List<Group> groups, Image instanceUserData, boolean existingNetwork,
-                        boolean existingSubnet, boolean assignFloatingIp) {
+                        boolean existingSubnet, NeutronNetworkView neutronNetworkView) {
         try {
             List<NovaInstanceView> novaInstances = new OpenStackGroupView(groups).getFlatNovaView();
             Map<String, Object> model = new HashMap<>();
@@ -56,7 +56,7 @@ public class HeatTemplateBuilder {
             model.put("groups", groups);
             model.put("existingNetwork", existingNetwork);
             model.put("existingSubnet", existingSubnet);
-            model.put("assignFloatingIp", assignFloatingIp);
+            model.put("assignFloatingIp", neutronNetworkView.assignFloatingIp());
             String generatedTemplate = processTemplateIntoString(freemarkerConfiguration.getTemplate(openStackHeatTemplatePath, "UTF-8"), model);
             LOGGER.debug("Generated Heat template: {}", generatedTemplate);
             return generatedTemplate;

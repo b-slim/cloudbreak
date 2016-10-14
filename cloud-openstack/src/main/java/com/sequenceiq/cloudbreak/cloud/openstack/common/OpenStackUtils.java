@@ -26,7 +26,6 @@ import com.sequenceiq.cloudbreak.cloud.model.CloudResourceStatus;
 import com.sequenceiq.cloudbreak.cloud.model.Network;
 import com.sequenceiq.cloudbreak.cloud.openstack.auth.OpenStackClient;
 import com.sequenceiq.cloudbreak.cloud.openstack.status.HeatStackStatus;
-import com.sequenceiq.cloudbreak.cloud.openstack.view.NeutronNetworkView;
 import com.sequenceiq.cloudbreak.common.type.ResourceType;
 
 @Component
@@ -82,10 +81,6 @@ public class OpenStackUtils {
 
     public boolean isExistingNetwork(Network network) {
         return isNoneEmpty(getCustomNetworkId(network));
-    }
-
-    public boolean assignFloatingIp(Network network) {
-        return new NeutronNetworkView(network).assignFloatingIp();
     }
 
     public String getCustomNetworkId(Network network) {

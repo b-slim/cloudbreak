@@ -1,5 +1,7 @@
 package com.sequenceiq.cloudbreak.cloud.openstack.view;
 
+import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
+
 import com.sequenceiq.cloudbreak.cloud.model.Network;
 import com.sequenceiq.cloudbreak.cloud.openstack.common.OpenStackConstants;
 
@@ -16,11 +18,11 @@ public class NeutronNetworkView {
     }
 
     public boolean assignFloatingIp() {
-        return !(getPublicNetId() == null || getPublicNetId().isEmpty());
+        return isNoneEmpty(getPublicNetId());
     }
 
     public String getPublicNetId() {
-        return network.getParameter(OpenStackConstants.PUBLIC_NET_ID, String.class);
+        return network.getStringParameter(OpenStackConstants.PUBLIC_NET_ID);
     }
 
 }

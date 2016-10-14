@@ -102,16 +102,19 @@ ${core_user_data}
     properties:
       image: { get_param: image_id }
       flavor: ${agent.flavor}
+      availability_zone : infra
       key_name: { get_param: key_name }
       admin_user: centos
       metadata: ${agent.metadata}
       networks:
         - port: { get_resource: ambari_app_port_${agent.instanceId} }
+      <#if agent.volumesCount != 0>
       block_device_mapping:
       <#list agent.volumes as volume>
-      - device_name: ${volume.device}
-        volume_id: { get_resource: ambari_volume_${agent.instanceId}_${volume_index} }
+        - device_name: ${volume.device}
+          volume_id: { get_resource: ambari_volume_${agent.instanceId}_${volume_index} }
       </#list>
+      </#if>
       user_data_format: SOFTWARE_CONFIG
       <#if agent.type == "GATEWAY">
       user_data:  { get_resource: gw_user_data_config }
@@ -138,12 +141,6 @@ ${core_user_data}
       network_id: { get_resource: app_network }
       </#if>
       replacement_policy: AUTO
-      fixed_ips:
-      <#if existingSubnet>
-        - subnet_id: { get_param: subnet_id }
-      <#else>
-        - subnet_id: { get_resource: app_subnet }
-      </#if>
       security_groups: [ { get_resource: security_group_${agent.instance.groupName} } ]
 
   <#if assignFloatingIp>

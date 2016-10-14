@@ -1,6 +1,11 @@
 package com.sequenceiq.cloudbreak.cloud.openstack.heat;
 
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,20 +13,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.IsNot.not;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import static org.mockito.Mockito.when;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
 import com.google.common.collect.ImmutableMap;
 import com.sequenceiq.cloudbreak.api.model.InstanceGroupType;
@@ -30,11 +31,13 @@ import com.sequenceiq.cloudbreak.cloud.model.Group;
 import com.sequenceiq.cloudbreak.cloud.model.Image;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceStatus;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceTemplate;
+import com.sequenceiq.cloudbreak.cloud.model.Network;
 import com.sequenceiq.cloudbreak.cloud.model.Security;
 import com.sequenceiq.cloudbreak.cloud.model.SecurityRule;
 import com.sequenceiq.cloudbreak.cloud.model.Volume;
 import com.sequenceiq.cloudbreak.cloud.openstack.common.OpenStackUtils;
-import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
+import com.sequenceiq.cloudbreak.cloud.openstack.view.NeutronNetworkView;
+
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 
@@ -92,10 +95,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("cb-sec-group_" + "t"));
         assertThat(templateString, containsString("app_net_id"));
@@ -111,10 +114,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = false;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("cb-sec-group_" + "t"));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -130,10 +133,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = false;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, containsString("app_net_id"));
@@ -149,10 +152,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = false;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView(null);
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, containsString("app_net_id"));
@@ -168,10 +171,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = false;
         boolean existingSubnet = false;
-        boolean assignFloatingIp = false;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView(null);
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -187,10 +190,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = false;
-        boolean assignFloatingIp = false;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView(null);
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, containsString("app_net_id"));
@@ -206,10 +209,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = false;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = false;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView(null);
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -225,10 +228,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = false;
         boolean existingSubnet = false;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, containsString("name: cb-sec-group_" + "t"));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -244,10 +247,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, not(containsString("name: cb-sec-group_" + "t")));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -263,10 +266,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = false;
         boolean existingSubnet = true;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, not(containsString("name: cb-sec-group_" + "t")));
         assertThat(templateString, containsString("app_net_id"));
@@ -282,10 +285,10 @@ public class HeatTemplateBuilderTest {
         //GIVEN
         boolean existingNetwork = true;
         boolean existingSubnet = false;
-        boolean assignFloatingIp = true;
+        NeutronNetworkView neutronNetworkView = createNeutronNetworkView("floating_pool_id");
         //WHEN
         when(openStackUtil.adjustStackNameLength(Mockito.anyString())).thenReturn("t");
-        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, assignFloatingIp);
+        String templateString = heatTemplateBuilder.build(stackName, groups, image, existingNetwork, existingSubnet, neutronNetworkView);
         //THEN
         assertThat(templateString, not(containsString("name: cb-sec-group_" + "t")));
         assertThat(templateString, not(containsString("app_net_id")));
@@ -294,5 +297,15 @@ public class HeatTemplateBuilderTest {
         assertThat(templateString, not(containsString("app_subnet")));
         assertThat(templateString, not(containsString("network_id")));
         assertThat(templateString, not(containsString("public_net_id")));
+    }
+
+    private NeutronNetworkView createNeutronNetworkView(String publicNetId) {
+        Map<String, Object> parameters = new HashMap<>();
+        if (publicNetId != null) {
+            parameters.put("publicNetId", publicNetId);
+        }
+        Network network = new Network(null, parameters);
+        return new NeutronNetworkView(network);
+
     }
 }
