@@ -25,7 +25,6 @@ import com.sequenceiq.cloudbreak.cloud.model.CloudResourceStatus;
 import com.sequenceiq.cloudbreak.cloud.model.CloudStack;
 import com.sequenceiq.cloudbreak.cloud.model.Group;
 import com.sequenceiq.cloudbreak.cloud.model.InstanceStatus;
-import com.sequenceiq.cloudbreak.cloud.model.Network;
 import com.sequenceiq.cloudbreak.cloud.notification.PersistenceNotifier;
 import com.sequenceiq.cloudbreak.cloud.openstack.auth.OpenStackClient;
 import com.sequenceiq.cloudbreak.cloud.openstack.common.OpenStackUtils;
@@ -50,8 +49,8 @@ public class OpenStackResourceConnector implements ResourceConnector {
     public List<CloudResourceStatus> launch(AuthenticatedContext authenticatedContext, CloudStack stack, PersistenceNotifier notifier,
             AdjustmentType adjustmentType, Long threshold) {
         String stackName = utils.getStackName(authenticatedContext);
-        boolean existingNetwork = isExistingNetwork(stack);
         NeutronNetworkView neutronNetworkView = new NeutronNetworkView(stack.getNetwork());
+        boolean existingNetwork = neutronNetworkView.isExistingNetwork();
         String existingSubnetCidr = getExistingSubnetCidr(authenticatedContext, stack);
         String heatTemplate = heatTemplateBuilder.build(
                 stackName, stack.getGroups(), stack.getImage(), existingNetwork, existingSubnetCidr != null, neutronNetworkView);
@@ -125,8 +124,8 @@ public class OpenStackResourceConnector implements ResourceConnector {
     @Override
     public List<CloudResourceStatus> upscale(AuthenticatedContext authenticatedContext, CloudStack stack, List<CloudResource> resources) {
         String stackName = utils.getStackName(authenticatedContext);
-        boolean existingNetwork = isExistingNetwork(stack);
         NeutronNetworkView neutronNetworkView = new NeutronNetworkView(stack.getNetwork());
+        boolean existingNetwork = neutronNetworkView.isExistingNetwork();
         String existingSubnetCidr = getExistingSubnetCidr(authenticatedContext, stack);
         String heatTemplate = heatTemplateBuilder.build(
                 stackName, stack.getGroups(), stack.getImage(), existingNetwork, existingSubnetCidr != null, neutronNetworkView);
@@ -139,8 +138,8 @@ public class OpenStackResourceConnector implements ResourceConnector {
     public List<CloudResourceStatus> downscale(AuthenticatedContext auth, CloudStack cloudStack, List<CloudResource> resources, List<CloudInstance> vms) {
         CloudStack stack = removeDeleteRequestedInstances(cloudStack);
         String stackName = utils.getStackName(auth);
-        boolean existingNetwork = isExistingNetwork(stack);
         NeutronNetworkView neutronNetworkView = new NeutronNetworkView(stack.getNetwork());
+        boolean existingNetwork = neutronNetworkView.isExistingNetwork();
         String existingSubnetCidr = getExistingSubnetCidr(auth, stack);
         String heatTemplate = heatTemplateBuilder.build(
                 stackName, stack.getGroups(), stack.getImage(), existingNetwork, existingSubnetCidr != null, neutronNetworkView);
@@ -152,8 +151,8 @@ public class OpenStackResourceConnector implements ResourceConnector {
     @Override
     public List<CloudResourceStatus> update(AuthenticatedContext authenticatedContext, CloudStack stack, List<CloudResource> resources) {
         String stackName = utils.getStackName(authenticatedContext);
-        boolean existingNetwork = isExistingNetwork(stack);
         NeutronNetworkView neutronNetworkView = new NeutronNetworkView(stack.getNetwork());
+        boolean existingNetwork = neutronNetworkView.isExistingNetwork();
         String existingSubnetCidr = getExistingSubnetCidr(authenticatedContext, stack);
         String heatTemplate = heatTemplateBuilder.build(
                 stackName, stack.getGroups(), stack.getImage(), existingNetwork, existingSubnetCidr != null, neutronNetworkView);
@@ -190,13 +189,9 @@ public class OpenStackResourceConnector implements ResourceConnector {
         return new CloudStack(groups, stack.getNetwork(), stack.getImage(), stack.getParameters());
     }
 
-    private boolean isExistingNetwork(CloudStack stack) {
-        return utils.isExistingNetwork(stack.getNetwork());
-    }
-
     private String getExistingSubnetCidr(AuthenticatedContext authenticatedContext, CloudStack stack) {
-        Network network = stack.getNetwork();
-        return utils.isExistingSubnet(network) ? utils.getExistingSubnetCidr(authenticatedContext, network) : null;
+        NeutronNetworkView neutronView = new NeutronNetworkView(stack.getNetwork());
+        return neutronView.isExistingSubnet() ? utils.getExistingSubnetCidr(authenticatedContext, neutronView) : null;
     }
 
 }
