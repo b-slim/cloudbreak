@@ -49,6 +49,15 @@
         }
       },
       {
+        "druid-superset": {
+          "properties_attributes": {},
+          "properties": {
+            "SECRET_KEY" : "123admin123",
+            "SUPERSET_DATABASE_TYPE" : "sqlite"
+          }
+        }
+      },
+      {
       "druid-overlord" : {
         "properties_attributes" : { },
         "properties" : {
